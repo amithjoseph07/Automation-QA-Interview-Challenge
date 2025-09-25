@@ -1,0 +1,111 @@
+version: '3.8'
+
+services:
+  # Mock API Server
+  api:
+    image: mockserver/mockserver:latest
+    container_name: knowledge-api-mock
+    ports:
+      - "8000:1080"
+    environment:
+      MOCKSERVER_PROPERTY_FILE: /config/mockserver.properties
+      MOCKSERVER_INITIALIZATION_JSON_PATH: /config/expectations.json
+    volumes:
+      - ./mock-data/mockserver.properties:/config/mockserver.properties
+      - ./mock-data/expectations.json:/config/expectations.json
+    networks:
+      - knowledge-network
+
+  # Alternative: Use json-server for simpler mocking
+  json-server:
+    image: vimagick/json-server:latest
+    container_name: knowledge-json-server
+    ports:
+      - "8001:3000"
+    volumes:
+      - ./mock-data/db.json:/data/db.json
+      - ./mock-data/routes.json:/data/routes.json
+    command: --watch /data/db.json --routes /data/routes.json --host 0.0.0.0
+    networks:
+      - knowledge-network
+
+  # Frontend Mock (using nginx to serve static files)
+  frontend:
+    image: nginx:alpine
+    container_name: knowledge-frontend
+    ports:
+      - "3000:80"
+    volumes:
+      - ./mock-ui:/usr/share/nginx/html
+      - ./mock-data/nginx.conf:/etc/nginx/nginx.conf
+    networks:
+      - knowledge-network
+
+  # Weaviate Vector Database (simplified for testing)
+  weaviate:
+    image: semitechnologies/weaviate:latest
+    container_name: knowledge-weaviate
+    ports:
+      - "8080:8080"
+    environment:
+      QUERY_DEFAULTS_LIMIT: 25
+      AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED: 'true'
+      PERSISTENCE_DATA_PATH: '/var/lib/weaviate'
+      DEFAULT_VECTORIZER_MODULE: 'none'
+      ENABLE_MODULES: ''
+      CLUSTER_HOSTNAME: 'node1'
+    volumes:
+      - weaviate-data:/var/lib/weaviate
+    networks:
+      - knowledge-network
+
+  # Alternative: Real-world demo app (Realworld Conduit)
+  realworld-backend:
+    image: gothinkster/node-express-realworld-example-app:latest
+    container_name: realworld-api
+    ports:
+      - "3100:3000"
+    environment:
+      NODE_ENV: development
+      MONGODB_URI: mongodb://mongo:27017/conduit
+      SECRET: thisisasecret
+    depends_on:
+      - mongo
+    networks:
+      - knowledge-network
+
+  realworld-frontend:
+    image: gothinkster/angular-realworld-example-app:latest
+    container_name: realworld-ui
+    ports:
+      - "4200:80"
+    networks:
+      - knowledge-network
+
+  # MongoDB for Realworld app
+  mongo:
+    image: mongo:5
+    container_name: realworld-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - knowledge-network
+
+  # Alternative: Use httpbin for API testing practice
+  httpbin:
+    image: kennethreitz/httpbin
+    container_name: httpbin-test
+    ports:
+      - "8888:80"
+    networks:
+      - knowledge-network
+
+volumes:
+  weaviate-data:
+  mongo-data:
+
+networks:
+  knowledge-network:
+    driver: bridge
