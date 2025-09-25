@@ -8,7 +8,7 @@ Welcome to the PearlThoughts Enterprise QA Challenge. This is not your typical "
 **Focus**: Student Onboarding - A business-critical workflow
 **Complexity**: Enterprise-level with multiple system integrations
 **Time Estimate**: 4-6 hours
-**Deadline**: 5 business days from receipt
+**Deadline**: 2 business days from receipt
 
 ## 🏢 Why This Challenge Matters
 
