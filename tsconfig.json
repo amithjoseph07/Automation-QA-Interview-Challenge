@@ -11,10 +11,10 @@
     "moduleResolution": "node",
     "baseUrl": ".",
     "paths": {
-      "@fixtures/*": ["./tests/fixtures/*"],
-      "@pages/*": ["./tests/fixtures/page-objects/*"],
-      "@data/*": ["./tests/fixtures/test-data/*"],
-      "@utils/*": ["./tests/fixtures/utils/*"]
+      "@pages/*": ["./tests/fixtures/pages/*"],
+      "@data/*": ["./tests/fixtures/data/*"],
+      "@utils/*": ["./tests/fixtures/helpers/*"],
+      "@fixtures/*": ["./tests/fixtures/*"]
     },
     "types": ["node", "@playwright/test"],
     "outDir": "./dist",
