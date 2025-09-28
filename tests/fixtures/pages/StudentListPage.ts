@@ -6,6 +6,8 @@ export class StudentListPage extends BasePage {
   private searchInput = '#studentSearch';
   private studentRows = '.student-row';
   private studentNameCell = '.student-name';
+  private deleteButton = 'button:has-text("Delete")';
+  private confirmDeleteButton = 'button:has-text("Confirm")';
 
   constructor(page: Page) {
     super(page);
@@ -40,5 +42,17 @@ export class StudentListPage extends BasePage {
   async openStudentDetails(name: string): Promise<void> {
     const student = this.page.locator(`${this.studentRows} >> text=${name}`);
     await student.click();
+  }
+
+  /**
+   * Delete a student by name
+   */
+  async deleteStudent(name: string): Promise<void> {
+    await this.searchStudent(name);
+    const student = this.page.locator(`${this.studentRows} >> text=${name}`);
+    await student.click();
+
+    await this.page.click(this.deleteButton);
+    await this.page.click(this.confirmDeleteButton);
   }
 }

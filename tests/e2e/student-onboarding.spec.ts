@@ -5,6 +5,7 @@ import { StudentFormPage } from '@pages/StudentFormPage';
 import { StudentListPage } from '@pages/StudentListPage';
 import { StudentDetailsPage } from '@pages/StudentDetailsPage';
 import { StudentFactory } from '@data/StudentFactory';
+import { BasePage } from '@pages/BasePage';
 
 test.describe('Student Onboarding Flow', () => {
   let loginPage: LoginPage;
